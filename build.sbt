@@ -14,6 +14,8 @@ libraryDependencies ++= Seq(
   "com.amazonaws"           %  "aws-java-sdk"   % "1.11.24",
   "org.apache.poi"          % "poi-ooxml"       % "3.14",
   "org.apache.lucene"       % "lucene-core"     % "6.1.0",
-  "org.apache.pdfbox"       % "pdfbox"          % "2.0.2"
-
+  "org.apache.pdfbox"       % "pdfbox"          % "2.0.2",
+  "org.mongodb.scala"       %% "mongo-scala-driver" % "1.1.1",
+  "org.json4s"              %% "json4s-native"  % "3.4.0",
+  "org.json4s"              %% "json4s-jackson" % "3.4.0"
 )
