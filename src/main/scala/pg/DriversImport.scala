@@ -13,15 +13,13 @@ case class Truck(registrationNumber: String
                  , color: String
                  , mobileNumber: String
                  , imei: String
-                 , trackerType: String)
+                 , trackerType: String) {
+
+  val _id = registrationNumber
+}
 
 object DriversImport {
   def main(args: Array[String]): Unit = {
-//    val resource = this.getClass.getResourceAsStream("/trucks.rpt")
-//
-//    assert(resource != null)
-//    val lines = scala.io.Source.fromInputStream(resource).getLines().toList
-
     val raw =
       """ { "registrationNumber": "584ع66 ایران 44", "chassisNumber": "", "vehicleType": "كاميون", "description": "", "color": "سفید", "imei": "863070017487249", "mobileNum": "09300977435", "trackerType": "VenusProvider" }
         |{ "registrationNumber": "541ع66 ایران 44", "chassisNumber": "", "vehicleType": "كاميون", "description": "94پاسارگاز", "color": "سفید", "imei": "861074020288109", "mobileNum": "09300872375", "trackerType": "JupiterProvider" }
@@ -66,24 +64,23 @@ object DriversImport {
         |{ "registrationNumber": "252ع66 ایران44", "chassisNumber": "", "vehicleType": "كاميون", "description": "94پاسارگاز", "color": "سفید", "imei": "861074020259530", "mobileNum": "09300928005", "trackerType": "JupiterProvider" }
       """.stripMargin
 
-    val lines = raw.split('\n')
+    val lines = raw.split('\n').filter(_.nonEmpty).map(_.trim).take(41)
 
-    for(l <- lines.filter(_.nonEmpty).map(_.trim).take(41)) {
+    val trucks =  for {
+      l <- lines
+      parsed = parse(l)
+      truck = Truck(parsed \ "registrationNumber" \\ classOf[JString] head
+        , parsed \ "chassisNumber" \\ classOf[JString] head
+        , parsed \ "vehicleType" \\ classOf[JString] head
+        , parsed \ "description" \\ classOf[JString] head
+        , parsed \ "color" \\ classOf[JString] head
+        , parsed \ "mobileNum" \\ classOf[JString] head
+        , parsed \ "imei" \\ classOf[JString] head
+        , parsed \ "trackerType" \\ classOf[JString] head)
+    } yield truck
 
-      val parsed = parse(l)
-
-      val registrationNumber = parsed \ "registrationNumber" \\ classOf[JString] head
-      val chassisNumber = parsed \ "chassisNumber" \\ classOf[JString] head
-      val vehicleType = parsed \ "vehicleType" \\ classOf[JString] head
-      val description = parsed \ "description" \\ classOf[JString] head
-      val color = parsed \ "color" \\ classOf[JString] head
-      val imei = parsed \ "imei" \\ classOf[JString] head
-      val mobileNum = parsed \ "mobileNum" \\ classOf[JString] head
-      val trackerType = parsed \ "trackerType" \\ classOf[JString] head
-
-      val truck = Truck(registrationNumber, chassisNumber, vehicleType, description, color, mobileNum, imei, trackerType)
-
-      println(truck)
-    }
+    println(s"number of trucks: ${trucks.size}")
   }
+
+
 }
