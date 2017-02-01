@@ -8,7 +8,9 @@ object LDAPPrototype {
 
   def main(args: Array[String]): Unit = {
     //    val ldap = new LdapNetworkConnection("localhost", 389)
-    val ldapAdServer = "ldap://ad.yourserver.com:389"
+
+    val ldapAdServer = "LDAP://ldap.itd.umich.edu:389"
+//    val ldapAdServer = "ldap://ad.yourserver.com:389"
     val ldapSearchBase = "dc=ad,dc=my-domain,dc=com"
 
     val ldapUsername = "administrator"
@@ -18,9 +20,13 @@ object LDAPPrototype {
 
     val env = new util.Hashtable[String, Object]()
 
-    env.put(Context.SECURITY_AUTHENTICATION, "simple")
-    env.put(Context.SECURITY_PRINCIPAL, ldapUsername)
-    env.put(Context.SECURITY_CREDENTIALS, ldapPassword)
+//    env.put(Context.SECURITY_AUTHENTICATION, "simple")
+//    env.put(Context.SECURITY_PRINCIPAL, ldapUsername)
+//    env.put(Context.SECURITY_CREDENTIALS, ldapPassword)
+
+    env.put(Context.SECURITY_AUTHENTICATION, "Anonymous")
+    env.put(Context.SECURITY_PRINCIPAL, "")
+    env.put(Context.SECURITY_CREDENTIALS, "")
 
     env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory")
     env.put(Context.PROVIDER_URL, ldapAdServer)
