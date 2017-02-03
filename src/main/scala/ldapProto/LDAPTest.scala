@@ -1,18 +1,11 @@
 package ldapProto
 
-import java.util.Hashtable
-import javax.naming.Context
 import javax.naming.NamingEnumeration
-import javax.naming.NamingException
-import javax.naming.directory.DirContext
-import javax.naming.directory.SearchControls
-import javax.naming.directory.SearchResult
-import javax.naming.ldap.InitialLdapContext
-import javax.naming.ldap.LdapContext
+import javax.naming.directory.{DirContext, SearchControls, SearchResult}
 
 class LDAPTest {
 
-  def findAccountByAccountName(ctx: DirContext , ldapSearchBase: String , accountName: String ) = {
+  def findAccountByAccountName(ctx: DirContext , ldapSearchBase: String , accountName: String ): SearchResult = {
 
     val searchFilter = "(&(objectClass=user)(sAMAccountName=" + accountName + "))"
 
@@ -21,15 +14,13 @@ class LDAPTest {
 
     val results: NamingEnumeration[SearchResult] = ctx.search(ldapSearchBase, searchFilter, searchControls)
 
-    println("results???")
     var searchResult: SearchResult = null
-    if(results.hasMoreElements()) {
+    if(results.hasMoreElements) {
 
       searchResult = results.nextElement()
-//      searchResult = (SearchResult) results.nextElement()
 
       //make sure there is not another item available, there should be only 1 match
-      if(results.hasMoreElements()) {
+      if(results.hasMoreElements) {
         System.err.println("Matched multiple users for the accountName: " + accountName);
         null
       }
@@ -38,33 +29,31 @@ class LDAPTest {
     searchResult
   }
 
-  def findGroupBySID(ctx: DirContext , ldapSearchBase: String, sid: String) = {
+  def findGroupBySID(ctx: DirContext , ldapSearchBase: String, sid: String): AnyRef = {
 
-    val searchFilter = "(&(objectClass=group)(objectSid=" + sid + "))"
-
+    val searchFilter = s"(&(objectClass=group)(objectSid=$sid))"
     val searchControls = new SearchControls()
     searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE)
 
-//    NamingEnumeration < SearchResult > results = ctx.search(ldapSearchBase, searchFilter, searchControls);
-    val results = ctx.search(ldapSearchBase, searchFilter, searchControls)
+    val results: NamingEnumeration[SearchResult] = ctx.search(ldapSearchBase, searchFilter, searchControls)
 
-    if (results.hasMoreElements()) {
-//      val searchResult = (SearchResult)
-      val t = results.nextElement()
-      //
+    var searchResults: SearchResult = null
+    if (results.hasMoreElements) {
+      searchResults = results.nextElement()
+
       //make sure there is not another item available, there should be only 1 match
-//      if (results.hasMoreElements()) {
-//        System.err.println("Matched multiple groups for the group with SID: " + sid);
-//        return null;
-//      } else {
-//        return (String) searchResult
-//        .getAttributes().get("sAMAccountName").get();
-//      }
+      if (results.hasMoreElements) {
+        System.err.println("Matched multiple groups for the group with SID: " + sid);
+        null
+      } else {
+        searchResults.getAttributes().get("sAMAccountName").get()
+      }
+    } else {
+      null
     }
-    null
   }
 
-  def getPrimaryGroupSID(srLdapUser: SearchResult ) = {
+  def getPrimaryGroupSID(srLdapUser: SearchResult ): String = {
     val objectSID = srLdapUser.getAttributes().get("objectSid").get().asInstanceOf[Array[Byte]]
     val strPrimaryGroupID = srLdapUser.getAttributes().get("primaryGroupID").get().asInstanceOf[String]
 
@@ -84,7 +73,7 @@ class LDAPTest {
     *
     * Based on code from here - http://forums.oracle.com/forums/thread.jspa?threadID=1155740&tstart=0
     */
-  def decodeSID(sid: Array[Byte]) = {
+  def decodeSID(sid: Array[Byte]): String = {
 
     val strSid = new StringBuilder("S-")
 
