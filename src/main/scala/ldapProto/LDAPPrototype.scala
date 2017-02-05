@@ -7,12 +7,12 @@ import javax.naming.ldap.InitialLdapContext
 object LDAPPrototype {
 
   def main(args: Array[String]): Unit = {
-    val ldapAdServer = "LDAP://"
-    val ldapSearchBase = "dc=parsagroup,dc=local"
+    val ldapAdServer = "LDAP://192.168.12.2"
+    val ldapSearchBase = "dc=WWL,dc=local"
     val env = new util.Hashtable[String, Object]()
     env.put(Context.SECURITY_AUTHENTICATION, "simple")
-    env.put(Context.SECURITY_PRINCIPAL, "PARSAGROUP\\m.emamjome")
-    env.put(Context.SECURITY_CREDENTIALS, "testing12345.")
+    env.put(Context.SECURITY_PRINCIPAL, "WWL\\meisam")
+    env.put(Context.SECURITY_CREDENTIALS, "locality1.")
 
     env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory")
     env.put(Context.PROVIDER_URL, ldapAdServer)
@@ -27,7 +27,7 @@ object LDAPPrototype {
     val ldap = new LDAPTest()
 
     //1) lookup the ldap account
-    val srLdapUser = ldap.findAccountByAccountName(ctx, ldapSearchBase, "test")
+    val srLdapUser = ldap.findAccountByAccountName(ctx, ldapSearchBase, "meisam")
     println(s"found user with id: $srLdapUser")
 
     //2) get the SID of the users primary group
