@@ -1,11 +1,14 @@
 package ldapProto
 
 import java.util
-import javax.naming.{Context, NamingEnumeration}
-import javax.naming.directory.{Attribute, SearchControls, SearchResult}
+import javax.naming.directory.{SearchControls, SearchResult}
 import javax.naming.ldap.InitialLdapContext
+import javax.naming.{Context, NamingEnumeration}
 
-case class UserInfo(username: String, firstName: String, lastName: String)
+case class UserInfo(username: String,
+                    firstName: String,
+                    lastName: String,
+                    groups: Array[String])
 
 case class LDAPServerEndpoint(serverEndpoint: String, fullDomain: String, domain: String) {
   val ldapSearchBase: String = fullDomain.split(Array('.')).map(s => s"dc=$s").mkString(",")
@@ -13,11 +16,9 @@ case class LDAPServerEndpoint(serverEndpoint: String, fullDomain: String, domain
 
 trait LDAPAuthentication {
   def login(username: String, password: String): Option[UserInfo]
-  def getPermissions(userInfo: UserInfo): Option[Array[String]]
 }
 
 class LDAPAuthenticationImplementation(endpoint: LDAPServerEndpoint) extends LDAPAuthentication {
-
   private def getEnvironmentMap(username: String, password: String): util.Hashtable[String, Object] = {
     val env = new util.Hashtable[String, Object]()
     env.put(Context.SECURITY_AUTHENTICATION, "simple")
@@ -29,6 +30,12 @@ class LDAPAuthenticationImplementation(endpoint: LDAPServerEndpoint) extends LDA
     // the following is helpful in debugging errors
     // env.put("com.sun.jndi.ldap.trace.ber", System.err)
     env
+  }
+  private def getMemberships(attributes: String): Array[String] = {
+    attributes.split(Array(','))
+      .map(_.toLowerCase())
+      .filter(s => s.contains("cn"))
+      .map(s => s.replace("cn=", "").trim)
   }
 
   override def login(username: String, password: String): Option[UserInfo] = {
@@ -55,7 +62,9 @@ class LDAPAuthenticationImplementation(endpoint: LDAPServerEndpoint) extends LDA
           val attributes = searchResult.getAttributes
           val firstName = attributes.get("givenname").get().asInstanceOf[String]
           val lastName = attributes.get("sn").get().asInstanceOf[String]
-          Some(UserInfo(username, firstName, lastName))
+          val memberships = getMemberships(attributes.get("memberof").get().asInstanceOf[String])
+
+          Some(UserInfo(username, firstName, lastName, memberships))
         }
       } else {
         None
@@ -66,8 +75,6 @@ class LDAPAuthenticationImplementation(endpoint: LDAPServerEndpoint) extends LDA
       case _: javax.naming.AuthenticationException => None
     }
   }
-
-  override def getPermissions(userInfo: UserInfo): Option[Array[String]] = ???
 }
 
 object LDAPAuthentication {

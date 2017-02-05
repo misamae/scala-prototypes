@@ -17,11 +17,17 @@ class LDAPAuthenticationSpec extends FlatSpec with Matchers {
 
   "login" should "return Some(UserInfo) for valid username and password" in {
     val result = ldapAuthentication.login(validUsername, validPassword)
-    assert(result.contains(UserInfo(validUsername, "Meisam", "E")))
+    assert(result.get.username == validUsername)
   }
 
   "login" should "return firstName and lastName for valid username and password" in {
     val result = ldapAuthentication.login(validUsername, validPassword)
-    assert(result.contains(UserInfo(validUsername, "Meisam", "E")))
+    assert(result.get.firstName == "Meisam")
+    assert(result.get.lastName == "E")
+  }
+
+  "login" should "return users group memberships" in {
+    val result = ldapAuthentication.login(validUsername, validPassword)
+    assert(result.get.groups.contains("administrators"))
   }
 }
