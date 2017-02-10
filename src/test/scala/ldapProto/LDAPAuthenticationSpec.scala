@@ -4,10 +4,10 @@ import org.scalatest.{FlatSpec, Matchers}
 
 class LDAPAuthenticationSpec extends FlatSpec with Matchers {
   val serverEndpoint = "LDAP://"
-  val fullDomain=""
-  val domain = ""
-  val validUsername = ""
-  val validPassword = ""
+  val fullDomain="example.org"
+  val domain = "example"
+  val validUsername = "DN: cn=admin,dc=example,dc=org"
+  val validPassword = "admin"
   val ldapAuthentication = LDAPAuthentication(serverEndpoint, fullDomain, domain)
 
   "login" should "return None for invalid username and password" in {
