@@ -45,7 +45,8 @@ class LDAPAuthenticationImplementation(endpoint: LDAPServerEndpoint) extends LDA
       // in case we can create context user is authenticated
       val ctx = new InitialLdapContext(getEnvironmentMap(username, password), null)
 
-      val searchFilter = s"(&(objectClass=user)(sAMAccountName=$username))"
+//      val searchFilter = s"(&(objectClass=user)(sAMAccountName=$username))"
+      val searchFilter = s"cn=meisam emamjome"
 
       val searchControls = new SearchControls()
       searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE)

@@ -6,7 +6,7 @@ class LDAPAuthenticationSpec extends FlatSpec with Matchers {
   val serverEndpoint = "LDAP://"
   val fullDomain="example.org"
   val domain = "example"
-  val validUsername = "DN: cn=admin,dc=example,dc=org"
+  val validUsername = "admin"
   val validPassword = "admin"
   val ldapAuthentication = LDAPAuthentication(serverEndpoint, fullDomain, domain)
 
