@@ -23,8 +23,8 @@ class LDAPAuthenticationImplementation(endpoint: LDAPServerEndpoint) extends LDA
     val env = new util.Hashtable[String, Object]()
     env.put(Context.SECURITY_AUTHENTICATION, "simple")
 
-    env.put(Context.SECURITY_PRINCIPAL, s"cn=admin,dc=example,dc=org")
-//    env.put(Context.SECURITY_PRINCIPAL, s"${endpoint.domain}\\$username")
+//    env.put(Context.SECURITY_PRINCIPAL, s"cn=admin,dc=example,dc=org")
+    env.put(Context.SECURITY_PRINCIPAL, s"${endpoint.domain}\\$username")
     env.put(Context.SECURITY_CREDENTIALS, password)
     env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory")
     env.put(Context.PROVIDER_URL, endpoint.serverEndpoint)

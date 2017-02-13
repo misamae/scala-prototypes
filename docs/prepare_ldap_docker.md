@@ -12,7 +12,14 @@
 
     docker run --name ldap-admin -p 6443:443 --hostname ldap-admin --link ldap:ldap-host --env PHPLDAPADMIN_LDAP_HOSTS=ldap-host --detach osixia/phpldapadmin:0.6.12
     
-# windows server docker
+Then open [https://localhost:6443/](https://localhost:6443/)
+
+Login DN: cn=admin,dc=example,dc=org
+
+password: admin
+
+    
+# windows server docker (useless)
 
     docker pull microsoft/windowsservercore
 
